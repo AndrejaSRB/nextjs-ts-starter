@@ -1,18 +1,7 @@
 {
-  "name": "@0xandreja/nextjs-ts-starter",
-  "version": "0.1.2",
-  "private": false,
-  "bin": {
-    "create-nextjs-ts": "./bin/dist/cli.js"
-  },
-  "files": [
-    "bin/dist",
-    "templates",
-    "package.json",
-    "README.md"
-  ],
-  "main": "bin/cli.js",
-  "types": "bin/cli.d.ts",
+  "name": "nextjs-ts-starter",
+  "version": "0.1.0",
+  "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
@@ -20,8 +9,7 @@
     "lint": "next lint",
     "format:fix": "prettier --write .",
     "format": "prettier --check .",
-    "lint:fix": "next lint --fix",
-    "prepare": "tsc"
+    "lint:fix": "next lint --fix"
   },
   "dependencies": {
     "@privy-io/react-auth": "^2.11.1",

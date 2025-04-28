@@ -5,7 +5,9 @@ import ellipsis from '@/utils/ellipsis';
 
 const UserAddress = () => {
   const user = useUser();
+
   if (!user) return null;
+
   return (
     <div className="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-lg">
       <span className="text-sm text-gray-600 dark:text-gray-300">Wallet Address:</span>

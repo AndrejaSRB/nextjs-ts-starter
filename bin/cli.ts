@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import { execSync } from 'child_process';
-import { existsSync, mkdirSync } from 'fs';
+import { existsSync, mkdirSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { cwd } from 'process';
 
@@ -25,33 +25,110 @@ const main = async () => {
     mkdirSync(targetDir);
 
     // Copy template files
-    const templateDir = join(__dirname, '../templates');
-    execSync(`cp -r ${templateDir}/* ${targetDir}`);
+    const templateDir = join(__dirname, '..', '..', 'templates');
+    console.log(`Looking for templates in: ${templateDir}`);
+
+    if (!existsSync(templateDir)) {
+      console.error(`Template directory not found at ${templateDir}`);
+      process.exit(1);
+    }
+
+    // List contents of template directory
+    console.log('Template directory contents:');
+    execSync(`ls -la "${templateDir}"`, { stdio: 'inherit' });
+
+    // Copy files
+    console.log('Copying template files...');
+    execSync(`cp -r "${templateDir}/"* "${targetDir}"`, { stdio: 'inherit' });
+
+    // Create .env.example
+    console.log('Creating .env.example...');
+    const envExample = `# Privy
+NEXT_PUBLIC_PRIVY_APP_ID="PIVY APP ID"
+NEXT_PUBLIC_PRIVY_CLIENT_ID="PRIVY APP SECRET"
+`;
+    writeFileSync(join(targetDir, '.env.example'), envExample);
+
+    // Create .gitignore
+    console.log('Creating .gitignore...');
+    const gitignore = `# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# local env files
+.env*.local
+.env
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts`;
+    writeFileSync(join(targetDir, '.gitignore'), gitignore);
 
     // Initialize git repository
-    execSync('git init', { cwd: targetDir });
+    console.log('Initializing git repository...');
+    execSync('git init', { cwd: targetDir, stdio: 'inherit' });
 
     // Install dependencies
-    console.log('Installing dependencies...');
-    execSync('npm install', { cwd: targetDir });
+    console.log('Installing dependencies (this may take a few minutes)...');
+    try {
+      execSync('npm install', {
+        cwd: targetDir,
+        stdio: 'inherit',
+        env: { ...process.env, FORCE_COLOR: '1' },
+      });
+    } catch (error) {
+      console.error(
+        'Error during npm install. You can try running npm install manually in the project directory.'
+      );
+      console.error('Continuing with project creation...');
+    }
 
     console.log(`
 🎉 Success! Created ${projectName} at ${targetDir}
-Inside that directory, you can run several commands:
 
-  npm run dev
-    Starts the development server.
+📦 Package: https://www.npmjs.com/package/@0xandreja/nextjs-ts-starter
+⭐️ Star it on GitHub: https://github.com/AndrejaSRB/nextjs-ts-starter
 
-  npm run build
-    Builds the app for production.
-
-  npm start
-    Runs the built app in production mode.
-
-We suggest that you begin by typing:
-
+🚀 Getting Started:
   cd ${projectName}
   npm run dev
+
+📚 Available Scripts:
+  npm run dev     - Start development server
+  npm run build   - Build for production
+  npm start       - Start production server
+  npm run lint    - Run ESLint
+  npm run format  - Format code with Prettier
+
+🔧 Configuration:
+  - Edit .env.example and rename to .env
+  - Configure Privy in the .env file
+  - Customize components in the components/ directory
+
+💡 Need help? Open an issue on GitHub!
     `);
   } catch (error) {
     console.error('Error:', error);
