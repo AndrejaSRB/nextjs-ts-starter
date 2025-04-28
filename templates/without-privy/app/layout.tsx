@@ -2,7 +2,6 @@ import { Geist, Geist_Mono } from 'next/font/google';
 
 import type { Metadata } from 'next';
 
-import Providers from '@/components/privy/privy-provider';
 import { ThemeProvider } from '@/components/theme/theme-provider';
 import QueryProvider from '@/providers/query-client';
 
@@ -37,9 +36,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <QueryProvider>
-            <Providers>{children}</Providers>
-          </QueryProvider>
+          <QueryProvider>{children}</QueryProvider>
         </ThemeProvider>
       </body>
     </html>

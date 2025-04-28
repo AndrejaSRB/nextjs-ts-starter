@@ -85,6 +85,12 @@ const eslintConfig = [
       'no-var': 'warn',
       'object-shorthand': 'warn',
       'quote-props': ['warn', 'as-needed'],
+      'no-console': [
+        'error',
+        {
+          allow: ['warn', 'error', 'debug', 'table'],
+        },
+      ],
     },
     settings: {
       react: {

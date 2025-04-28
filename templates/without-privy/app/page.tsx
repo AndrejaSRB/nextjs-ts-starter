@@ -1,8 +1,6 @@
 import { ThemeToggle } from '@/components/theme/theme-toggle';
 import TokenPrice from '@/components/token-price';
 import { Button } from '@/components/ui/button';
-import ConnectWalletButton from '@/components/web3/connect-wallet';
-import UserAddress from '@/components/web3/user-address';
 
 export default function Home() {
   return (
@@ -24,12 +22,8 @@ export default function Home() {
       </div>
 
       <TokenPrice />
-      <div className="flex flex-col gap-2 mb-2 text-foreground">
-        <UserAddress />
-      </div>
-
       <div className="flex gap-4">
-        <ConnectWalletButton />
+        <Button variant="default">Start</Button>
         <Button variant="outline">Learn more</Button>
       </div>
     </main>

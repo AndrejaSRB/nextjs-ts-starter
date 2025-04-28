@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 import { execSync } from 'child_process';
-import { existsSync, mkdirSync, writeFileSync } from 'fs';
+import { existsSync, mkdirSync, rmSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { cwd } from 'process';
+import prompts from 'prompts';
 
 const main = async () => {
   try {
@@ -21,11 +22,21 @@ const main = async () => {
       process.exit(1);
     }
 
+    // Ask about Privy
+    const { usePrivy } = await prompts({
+      type: 'confirm',
+      name: 'usePrivy',
+      message: 'Would you like to include Privy authentication?',
+      initial: true,
+    });
+
     console.log(`Creating new Next.js project in ${targetDir}...`);
     mkdirSync(targetDir);
 
     // Copy template files
     const templateDir = join(__dirname, '..', '..', 'templates');
+    const privyTemplateDir = join(templateDir, usePrivy ? 'with-privy' : 'without-privy');
+
     console.log(`Looking for templates in: ${templateDir}`);
 
     if (!existsSync(templateDir)) {
@@ -37,15 +48,29 @@ const main = async () => {
     console.log('Template directory contents:');
     execSync(`ls -la "${templateDir}"`, { stdio: 'inherit' });
 
-    // Copy files
-    console.log('Copying template files...');
-    execSync(`cp -r "${templateDir}/"* "${targetDir}"`, { stdio: 'inherit' });
+    // Copy base files (excluding with-privy/without-privy folders)
+    execSync(`cp -r "${templateDir}/." "${targetDir}"`, { stdio: 'inherit' });
+    // Copy the selected privy template OVER the base files
+    execSync(`cp -r "${privyTemplateDir}/." "${targetDir}"`, { stdio: 'inherit' });
+    // Copy the selected privy template's app/ contents into the generated app/ directory
+    execSync(`cp -r "${privyTemplateDir}/app/." "${targetDir}/app"`, { stdio: 'inherit' });
+    // Remove web3 folder if NO Privy
+    if (!usePrivy) {
+      const web3Dir = join(targetDir, 'components', 'web3');
+      try {
+        rmSync(web3Dir, { recursive: true, force: true });
+      } catch {}
+    }
 
     // Create .env.example
     console.log('Creating .env.example...');
-    const envExample = `# Privy
+    const envExample = usePrivy
+      ? `# Privy
 NEXT_PUBLIC_PRIVY_APP_ID="PIVY APP ID"
 NEXT_PUBLIC_PRIVY_CLIENT_ID="PRIVY APP SECRET"
+`
+      : `# Add your environment variables here
+NEXT_PUBLIC_APP_URL=http://localhost:3000
 `;
     writeFileSync(join(targetDir, '.env.example'), envExample);
 
@@ -99,7 +124,7 @@ next-env.d.ts`;
         stdio: 'inherit',
         env: { ...process.env, FORCE_COLOR: '1' },
       });
-    } catch (error) {
+    } catch {
       console.error(
         'Error during npm install. You can try running npm install manually in the project directory.'
       );
@@ -124,9 +149,8 @@ next-env.d.ts`;
   npm run format  - Format code with Prettier
 
 🔧 Configuration:
-  - Edit .env.example and rename to .env
-  - Configure Privy in the .env file
-  - Customize components in the components/ directory
+  - Edit .env.example and rename to .env.local
+  ${usePrivy ? '- Configure Privy in the .env file\n  - Customize components in the components/ directory' : '- Add your environment variables to .env.local'}
 
 💡 Need help? Open an issue on GitHub!
     `);
