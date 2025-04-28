@@ -1,5 +1,7 @@
 import { ThemeToggle } from '@/components/theme/theme-toggle';
 import { Button } from '@/components/ui/button';
+import ConnectWalletButton from '@/components/web3/connect-wallet';
+import UserAddress from '@/components/web3/user-address';
 
 export default function Home() {
   return (
@@ -10,7 +12,7 @@ export default function Home() {
 
       <h1 className="text-4xl font-bold mb-6 text-primary">Welcome!</h1>
 
-      <div className="flex flex-wrap justify-center gap-2 mb-8 text-foreground">
+      <div className="flex flex-wrap justify-center gap-2 mb-2 text-foreground">
         <span className="text-lg font-medium">Nextjs</span>
         <span className="text-lg">•</span>
         <span className="text-lg font-medium">Typescript</span>
@@ -20,8 +22,12 @@ export default function Home() {
         <span className="text-lg font-medium">Shadcn/UI</span>
       </div>
 
+      <div className="flex flex-col gap-2 mb-2 text-foreground">
+        <UserAddress />
+      </div>
+
       <div className="flex gap-4">
-        <Button variant="default">Connect</Button>
+        <ConnectWalletButton />
         <Button variant="outline">Learn more</Button>
       </div>
     </main>
