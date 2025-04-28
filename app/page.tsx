@@ -1,4 +1,5 @@
 import { ThemeToggle } from '@/components/theme/theme-toggle';
+import TokenPrice from '@/components/token-price';
 import { Button } from '@/components/ui/button';
 import ConnectWalletButton from '@/components/web3/connect-wallet';
 import UserAddress from '@/components/web3/user-address';
@@ -22,6 +23,7 @@ export default function Home() {
         <span className="text-lg font-medium">Shadcn/UI</span>
       </div>
 
+      <TokenPrice />
       <div className="flex flex-col gap-2 mb-2 text-foreground">
         <UserAddress />
       </div>

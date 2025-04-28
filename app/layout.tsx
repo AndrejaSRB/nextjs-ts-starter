@@ -4,6 +4,7 @@ import type { Metadata } from 'next';
 
 import Providers from '@/components/privy/privy-provider';
 import { ThemeProvider } from '@/components/theme/theme-provider';
+import QueryProvider from '@/providers/query-client';
 
 import './globals.css';
 
@@ -36,7 +37,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Providers>{children}</Providers>
+          <QueryProvider>
+            <Providers>{children}</Providers>
+          </QueryProvider>
         </ThemeProvider>
       </body>
     </html>
