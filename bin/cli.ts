@@ -10,7 +10,7 @@ const main = async () => {
 
     if (!projectName) {
       console.error('Please provide a project name');
-      console.error('Usage: npx @your-username/nextjs-ts-starter <project-name>');
+      console.error('Usage: npx @0xandreja/nextjs-ts-starter <project-name>');
       process.exit(1);
     }
 
@@ -25,7 +25,8 @@ const main = async () => {
     mkdirSync(targetDir);
 
     // Copy template files
-    execSync(`cp -r ${join(__dirname, '../templates/*')} ${targetDir}`);
+    const templateDir = join(__dirname, '../templates');
+    execSync(`cp -r ${templateDir}/* ${targetDir}`);
 
     // Initialize git repository
     execSync('git init', { cwd: targetDir });

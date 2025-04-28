@@ -42,13 +42,13 @@ var fs_1 = require("fs");
 var path_1 = require("path");
 var process_1 = require("process");
 var main = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var projectName, targetDir;
+    var projectName, targetDir, templateDir;
     return __generator(this, function (_a) {
         try {
             projectName = process.argv[2];
             if (!projectName) {
                 console.error('Please provide a project name');
-                console.error('Usage: npx @your-username/nextjs-ts-starter <project-name>');
+                console.error('Usage: npx @0xandreja/nextjs-ts-starter <project-name>');
                 process.exit(1);
             }
             targetDir = (0, path_1.join)((0, process_1.cwd)(), projectName);
@@ -58,8 +58,8 @@ var main = function () { return __awaiter(void 0, void 0, void 0, function () {
             }
             console.log("Creating new Next.js project in ".concat(targetDir, "..."));
             (0, fs_1.mkdirSync)(targetDir);
-            // Copy template files
-            (0, child_process_1.execSync)("cp -r ".concat((0, path_1.join)(__dirname, '../templates/*'), " ").concat(targetDir));
+            templateDir = (0, path_1.join)(__dirname, '../templates');
+            (0, child_process_1.execSync)("cp -r ".concat(templateDir, "/* ").concat(targetDir));
             // Initialize git repository
             (0, child_process_1.execSync)('git init', { cwd: targetDir });
             // Install dependencies
