@@ -39,8 +39,14 @@ const main = async () => {
       console.log(`Initializing Next.js project in current directory...`);
 
       // Check if directory is not empty
-      const files = execSync('ls -A', { encoding: 'utf8' }).trim().split('\n');
-      if (files.length > 0) {
+      const files = execSync('ls -A', { encoding: 'utf8' }).trim().split('\n').filter(Boolean);
+
+      // Filter out common hidden files that don't matter
+      const ignoredFiles = ['.DS_Store', '.git', '.gitignore', '.idea', '.vscode'];
+      const relevantFiles = files.filter(file => !ignoredFiles.includes(file));
+
+      if (relevantFiles.length > 0) {
+        console.log('Detected files in current directory:', relevantFiles.join(', '));
         const { confirm } = await prompts({
           type: 'confirm',
           name: 'confirm',
