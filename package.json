@@ -1,7 +1,8 @@
 {
-  "name": "@0xandreja/nextjs-ts-starter",
+  "name": "create-nextjs-ts",
   "version": "0.1.5",
   "private": false,
+  "description": "A modern Next.js starter template with TypeScript, Tailwind CSS, and optional Privy authentication",
   "bin": {
     "create-nextjs-ts": "./bin/dist/cli.js"
   },
@@ -31,5 +32,17 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/AndrejaSRB/nextjs-ts-starter.git"
-  }
+  },
+  "keywords": [
+    "next.js",
+    "typescript",
+    "tailwind",
+    "starter",
+    "template",
+    "privy",
+    "auth",
+    "react"
+  ],
+  "author": "0xandreja",
+  "license": "MIT"
 }

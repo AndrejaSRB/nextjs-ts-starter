@@ -14,11 +14,35 @@ A modern Next.js starter template with TypeScript, Tailwind CSS, and essential t
 - 🎨 Shadcn UI components
 - 🔄 ESLint & Prettier for code quality
 
-## Quick Start
+## Installation
+
+### ✅ Recommended: Using npx (runs without installing)
 
 ```bash
+# Create a new project
 npx create-nextjs-ts my-app
+
+# Or install in the current directory
+npx create-nextjs-ts .
+```
+
+### ❌ Not Recommended: Global installation
+
+```bash
+# Install globally (not recommended)
+npm install -g create-nextjs-ts
+
+# Then use the command
+create-nextjs-ts my-app
+```
+
+After creating your project:
+
+```bash
+# Navigate to your project
 cd my-app
+
+# Start the development server
 npm run dev
 ```
 
@@ -60,17 +84,13 @@ npm run dev
 ├── app/              # Next.js app directory
 ├── components/       # React components
 │   ├── ui/          # UI components
-│   ├── web3/        # Web3 components
+│   ├── web3/        # Web3 components (with Privy)
 │   └── theme/       # Theme components
 ├── hooks/           # Custom React hooks
 ├── lib/             # Utility functions
 ├── providers/       # React context providers
 └── public/          # Static assets
 ```
-
-## Development
-
-See [MAINTENANCE.md](./docs/MAINTENANCE.md) for detailed instructions on maintaining and updating the package.
 
 ## License
 

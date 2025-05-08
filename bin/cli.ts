@@ -11,7 +11,7 @@ const main = async () => {
 
     if (!projectName) {
       console.error('Please provide a project name');
-      console.error('Usage: npx @0xandreja/nextjs-ts-starter <project-name>');
+      console.error('Usage: npx create-nextjs-ts <project-name>');
       process.exit(1);
     }
 
@@ -163,7 +163,7 @@ next-env.d.ts`;
     console.log(`
 🎉 Success! Created ${useCurrentDir ? 'project in current directory' : projectName} at ${targetDir}
 
-📦 Package: https://www.npmjs.com/package/@0xandreja/nextjs-ts-starter
+📦 Package: https://www.npmjs.com/package/create-nextjs-ts
 ⭐️ Star it on GitHub: https://github.com/AndrejaSRB/nextjs-ts-starter
 
 🚀 Getting Started:
