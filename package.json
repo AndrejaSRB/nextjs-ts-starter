@@ -27,5 +27,9 @@
     "@types/node": "^20",
     "@types/prompts": "^2.4.9",
     "eslint": "^9"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AndrejaSRB/nextjs-ts-starter.git"
   }
 }

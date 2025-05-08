@@ -7,7 +7,7 @@ import prompts from 'prompts';
 
 const main = async () => {
   try {
-    const projectName = process.argv[2];
+    let projectName = process.argv[2];
 
     if (!projectName) {
       console.error('Please provide a project name');
@@ -15,9 +15,11 @@ const main = async () => {
       process.exit(1);
     }
 
-    const targetDir = join(cwd(), projectName);
+    // Check if user wants to install in current directory
+    const useCurrentDir = projectName === '.';
+    const targetDir = useCurrentDir ? cwd() : join(cwd(), projectName);
 
-    if (existsSync(targetDir)) {
+    if (!useCurrentDir && existsSync(targetDir)) {
       console.error(`Directory ${projectName} already exists`);
       process.exit(1);
     }
@@ -30,36 +32,55 @@ const main = async () => {
       initial: true,
     });
 
-    console.log(`Creating new Next.js project in ${targetDir}...`);
-    mkdirSync(targetDir);
+    if (!useCurrentDir) {
+      console.log(`Creating new Next.js project in ${targetDir}...`);
+      mkdirSync(targetDir);
+    } else {
+      console.log(`Initializing Next.js project in current directory...`);
 
-    // Copy template files
+      // Check if directory is not empty
+      const files = execSync('ls -A', { encoding: 'utf8' }).trim().split('\n');
+      if (files.length > 0) {
+        const { confirm } = await prompts({
+          type: 'confirm',
+          name: 'confirm',
+          message: 'Current directory is not empty. Continue anyway?',
+          initial: false,
+        });
+
+        if (!confirm) {
+          console.log('Operation cancelled.');
+          process.exit(0);
+        }
+      }
+    }
+
+    // Find template directory
     const templateDir = join(__dirname, '..', '..', 'templates');
-    const privyTemplateDir = join(templateDir, usePrivy ? 'with-privy' : 'without-privy');
+    const templateSource = join(templateDir, usePrivy ? 'with-privy' : 'without-privy');
 
-    console.log(`Looking for templates in: ${templateDir}`);
+    console.log(`Using template from: ${templateSource}`);
 
-    if (!existsSync(templateDir)) {
-      console.error(`Template directory not found at ${templateDir}`);
+    if (!existsSync(templateSource)) {
+      console.error(`Template directory not found at ${templateSource}`);
       process.exit(1);
     }
 
-    // List contents of template directory
-    console.log('Template directory contents:');
-    execSync(`ls -la "${templateDir}"`, { stdio: 'inherit' });
+    // Copy template files directly (not copying from root templates folder anymore)
+    console.log('Copying template files...');
+    execSync(`cp -r "${templateSource}/." "${targetDir}"`, { stdio: 'inherit' });
 
-    // Copy base files (excluding with-privy/without-privy folders)
-    execSync(`cp -r "${templateDir}/." "${targetDir}"`, { stdio: 'inherit' });
-    // Copy the selected privy template OVER the base files
-    execSync(`cp -r "${privyTemplateDir}/." "${targetDir}"`, { stdio: 'inherit' });
-    // Copy the selected privy template's app/ contents into the generated app/ directory
-    execSync(`cp -r "${privyTemplateDir}/app/." "${targetDir}/app"`, { stdio: 'inherit' });
     // Remove web3 folder if NO Privy
     if (!usePrivy) {
       const web3Dir = join(targetDir, 'components', 'web3');
-      try {
-        rmSync(web3Dir, { recursive: true, force: true });
-      } catch {}
+      if (existsSync(web3Dir)) {
+        try {
+          rmSync(web3Dir, { recursive: true, force: true });
+          console.log('Removed web3 components folder (not needed without Privy)');
+        } catch (error) {
+          console.error('Could not remove web3 components folder:', error);
+        }
+      }
     }
 
     // Create .env.example
@@ -112,9 +133,11 @@ yarn-error.log*
 next-env.d.ts`;
     writeFileSync(join(targetDir, '.gitignore'), gitignore);
 
-    // Initialize git repository
-    console.log('Initializing git repository...');
-    execSync('git init', { cwd: targetDir, stdio: 'inherit' });
+    // Initialize git repository (only if not already a git repo)
+    if (!existsSync(join(targetDir, '.git'))) {
+      console.log('Initializing git repository...');
+      execSync('git init', { cwd: targetDir, stdio: 'inherit' });
+    }
 
     // Install dependencies
     console.log('Installing dependencies (this may take a few minutes)...');
@@ -132,13 +155,13 @@ next-env.d.ts`;
     }
 
     console.log(`
-🎉 Success! Created ${projectName} at ${targetDir}
+🎉 Success! Created ${useCurrentDir ? 'project in current directory' : projectName} at ${targetDir}
 
 📦 Package: https://www.npmjs.com/package/@0xandreja/nextjs-ts-starter
 ⭐️ Star it on GitHub: https://github.com/AndrejaSRB/nextjs-ts-starter
 
 🚀 Getting Started:
-  cd ${projectName}
+  ${useCurrentDir ? '' : `cd ${projectName}`}
   npm run dev
 
 📚 Available Scripts:
